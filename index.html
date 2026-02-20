@@ -280,7 +280,7 @@
 <div id="toast"></div>
 
 <script>
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGT2PFJODulFHRRFgB2vuKhhE3V6Ic0mvHn-eFYVZDRUnzKTBCe-O1QwBqE2v-r4Y/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyH4Qu0y0efs72XsA2WgTmBmfvt9RveRTW-uQ2oDGmp8Rtgp0SimKiOHuDlWJ9yOkiw/exec";
   const BASE_URL = "https://maybeihor.github.io/SER/test/";
   const EMOTIONS = ["happy", "angry", "fear", "sad"];
 
@@ -398,10 +398,11 @@
       const btn = document.getElementById("submitBtn");
       const statusEl = document.getElementById("status");
       btn.disabled = true;
-      statusEl.textContent = "Saving...";
+      statusEl.textContent = "Saved.";
 
       const ageGroup = document.querySelector('input[name="age"]:checked').value;
-      const timestamp = new Date().toISOString();
+      const d = new Date();
+      const timestamp = `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
       const rows = [];
 
       files.forEach(filename => {
