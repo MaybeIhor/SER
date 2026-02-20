@@ -10,19 +10,14 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f5f5f0;
-    --surface: #ffffff;
-    --border: #d0d0c8;
-    --text: #1a1a1a;
-    --muted: #888;
-    --happy: #e8f5e9;
-    --angry: #fce4ec;
-    --fear: #ede7f6;
-    --sad: #e3f2fd;
-    --happy-sel: #4caf50;
-    --angry-sel: #e91e63;
-    --fear-sel: #7e57c2;
-    --sad-sel: #2196f3;
+    --bg: #111;
+    --surface: #1c1c1c;
+    --border: #2e2e2e;
+    --border-hover: #555;
+    --text: #e8e8e8;
+    --muted: #4a4a4a;
+    --sel-bg: #e8e8e8;
+    --sel-text: #111;
   }
 
   body {
@@ -36,7 +31,7 @@
   .items {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     max-width: 720px;
     margin: 0 auto;
   }
@@ -62,6 +57,7 @@
     width: 100%;
     height: 36px;
     outline: none;
+    filter: invert(1) hue-rotate(180deg);
   }
 
   .options {
@@ -80,31 +76,43 @@
   }
 
   .option label {
-    display: block;
-    text-align: center;
-    padding: 10px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 12px 4px 10px;
     border: 1px solid var(--border);
     border-radius: 4px;
-    font-size: 12px;
-    letter-spacing: 0.05em;
+    font-size: 11px;
+    letter-spacing: 0.06em;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
     user-select: none;
     text-transform: uppercase;
     font-weight: 500;
+    color: var(--muted);
   }
 
-  .option input[value="happy"] + label { background: var(--happy); }
-  .option input[value="angry"] + label { background: var(--angry); }
-  .option input[value="fear"] + label { background: var(--fear); }
-  .option input[value="sad"] + label { background: var(--sad); }
+  .option label svg {
+    display: block;
+    transition: opacity 0.15s;
+    opacity: 0.35;
+  }
 
-  .option input[value="happy"]:checked + label { background: var(--happy-sel); color: #fff; border-color: var(--happy-sel); }
-  .option input[value="angry"]:checked + label { background: var(--angry-sel); color: #fff; border-color: var(--angry-sel); }
-  .option input[value="fear"]:checked + label { background: var(--fear-sel); color: #fff; border-color: var(--fear-sel); }
-  .option input[value="sad"]:checked + label { background: var(--sad-sel); color: #fff; border-color: var(--sad-sel); }
+  .option label:hover { border-color: var(--border-hover); color: var(--text); }
+  .option label:hover svg { opacity: 0.75; }
 
-  .option label:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+  .option input:checked + label {
+    background: var(--sel-bg);
+    border-color: var(--sel-bg);
+    color: var(--sel-text);
+  }
+
+  .option input:checked + label svg {
+    opacity: 1;
+    filter: invert(1);
+  }
 
   .footer {
     max-width: 720px;
@@ -122,15 +130,15 @@
     font-weight: 500;
     padding: 12px 32px;
     background: var(--text);
-    color: #fff;
+    color: var(--bg);
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: opacity 0.15s;
   }
 
-  .submit-btn:hover { opacity: 0.8; }
-  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .submit-btn:hover:not(:disabled) { opacity: 0.8; }
+  .submit-btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
   .status { font-size: 11px; color: var(--muted); }
 
@@ -149,7 +157,7 @@
     left: 50%;
     transform: translateX(-50%);
     background: var(--text);
-    color: #fff;
+    color: var(--bg);
     padding: 12px 24px;
     border-radius: 4px;
     font-size: 12px;
@@ -172,6 +180,13 @@
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_D8hVt0exe4TOJlEUENuPVp7BODr8FcipV9qO6Zn3MryBbLkK4Rcq1PCpD3vneNtw/exec";
   const BASE_URL = "https://maybeihor.github.io/SER/test/";
   const EMOTIONS = ["happy", "angry", "fear", "sad"];
+
+  const ICONS = {
+    happy: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="11" r="1.5" fill="currentColor"/><circle cx="18" cy="11" r="1.5" fill="currentColor"/><path d="M9 16.5c1 2.5 9 2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    angry: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="13" r="1.5" fill="currentColor"/><circle cx="18" cy="13" r="1.5" fill="currentColor"/><path d="M8 9.5l4 2M20 9.5l-4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 19.5c1-2.5 9-2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    fear: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><ellipse cx="10" cy="12" rx="2" ry="2.5" fill="currentColor"/><ellipse cx="18" cy="12" rx="2" ry="2.5" fill="currentColor"/><ellipse cx="14" cy="19" rx="3" ry="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 8.5l-.5-2M16 8.5l.5-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    sad: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="11" r="1.5" fill="currentColor"/><circle cx="18" cy="11" r="1.5" fill="currentColor"/><path d="M9 19.5c1-2.5 9-2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M17.5 15.5c.3-.8 1-1.2 1.5-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="18.5" cy="17" r="1" fill="currentColor" opacity="0.5"/></svg>`
+  };
 
   async function loadFiles() {
     const res = await fetch("files.json");
@@ -232,7 +247,7 @@
 
         const label = document.createElement("label");
         label.htmlFor = `q_${i}_${emotion}`;
-        label.textContent = emotion;
+        label.innerHTML = ICONS[emotion] + `<span>${emotion}</span>`;
 
         wrapper.appendChild(input);
         wrapper.appendChild(label);
@@ -250,7 +265,6 @@
     submitBtn.addEventListener("click", async () => {
       submitBtn.disabled = true;
       statusEl.textContent = "Saving...";
-
       try {
         await fetch(APPS_SCRIPT_URL, {
           method: "POST",
