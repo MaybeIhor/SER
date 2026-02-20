@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Survey</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f5f0;
+    --surface: #ffffff;
+    --border: #d0d0c8;
+    --text: #1a1a1a;
+    --muted: #888;
+    --happy: #e8f5e9;
+    --angry: #fce4ec;
+    --fear: #ede7f6;
+    --sad: #e3f2fd;
+    --happy-sel: #4caf50;
+    --angry-sel: #e91e63;
+    --fear-sel: #7e57c2;
+    --sad-sel: #2196f3;
+  }
+
+  body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    padding: 40px 20px 80px;
+    min-height: 100vh;
+  }
+
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .item-header {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  audio {
+    width: 100%;
+    height: 36px;
+    outline: none;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .option { position: relative; }
+
+  .option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .option label {
+    display: block;
+    text-align: center;
+    padding: 10px 4px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .option input[value="happy"] + label { background: var(--happy); }
+  .option input[value="angry"] + label { background: var(--angry); }
+  .option input[value="fear"] + label { background: var(--fear); }
+  .option input[value="sad"] + label { background: var(--sad); }
+
+  .option input[value="happy"]:checked + label { background: var(--happy-sel); color: #fff; border-color: var(--happy-sel); }
+  .option input[value="angry"]:checked + label { background: var(--angry-sel); color: #fff; border-color: var(--angry-sel); }
+  .option input[value="fear"]:checked + label { background: var(--fear-sel); color: #fff; border-color: var(--fear-sel); }
+  .option input[value="sad"]:checked + label { background: var(--sad-sel); color: #fff; border-color: var(--sad-sel); }
+
+  .option label:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+
+  .footer {
+    max-width: 720px;
+    margin: 32px auto 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .submit-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 12px 32px;
+    background: var(--text);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .submit-btn:hover { opacity: 0.8; }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .status { font-size: 11px; color: var(--muted); }
+
+  .progress {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    max-width: 720px;
+    margin: 0 auto 20px;
+  }
+
+  #toast {
+    display: none;
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress" class="progress"></div>
+<div class="items" id="items"></div>
+<div class="footer">
+  <button class="submit-btn" id="submitBtn" disabled>Submit</button>
+  <span class="status" id="status">Answer all items to submit.</span>
+</div>
+<div id="toast"></div>
+
+<script>
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_D8hVt0exe4TOJlEUENuPVp7BODr8FcipV9qO6Zn3MryBbLkK4Rcq1PCpD3vneNtw/exec";
+  const BASE_URL = "https://maybeihor.github.io/SER/test/";
+  const EMOTIONS = ["happy", "angry", "fear", "sad"];
+
+  async function loadFiles() {
+    const res = await fetch("files.json");
+    return await res.json();
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildUI(files) {
+    const container = document.getElementById("items");
+    const progressEl = document.getElementById("progress");
+    const submitBtn = document.getElementById("submitBtn");
+    const statusEl = document.getElementById("status");
+    const answers = {};
+
+    files.forEach((filename, i) => {
+      const item = document.createElement("div");
+      item.className = "item";
+
+      const header = document.createElement("div");
+      header.className = "item-header";
+      header.textContent = `${String(i + 1).padStart(2, "0")} / ${files.length}`;
+
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "none";
+      audio.src = BASE_URL + filename;
+
+      const options = document.createElement("div");
+      options.className = "options";
+
+      EMOTIONS.forEach(emotion => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = `q_${i}`;
+        input.value = emotion;
+        input.id = `q_${i}_${emotion}`;
+
+        input.addEventListener("change", () => {
+          answers[filename] = emotion;
+          const answered = Object.keys(answers).length;
+          progressEl.textContent = `${answered} / ${files.length} answered`;
+          if (answered === files.length) {
+            submitBtn.disabled = false;
+            statusEl.textContent = "Ready to submit.";
+          }
+        });
+
+        const label = document.createElement("label");
+        label.htmlFor = `q_${i}_${emotion}`;
+        label.textContent = emotion;
+
+        wrapper.appendChild(input);
+        wrapper.appendChild(label);
+        options.appendChild(wrapper);
+      });
+
+      item.appendChild(header);
+      item.appendChild(audio);
+      item.appendChild(options);
+      container.appendChild(item);
+    });
+
+    progressEl.textContent = `0 / ${files.length} answered`;
+
+    submitBtn.addEventListener("click", async () => {
+      submitBtn.disabled = true;
+      statusEl.textContent = "Saving...";
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(answers),
+        });
+        showToast("Submitted. Thank you.");
+        statusEl.textContent = "Submitted.";
+      } catch (e) {
+        submitBtn.disabled = false;
+        statusEl.textContent = "Error: " + e.message;
+      }
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 3000);
+  }
+
+  loadFiles()
+    .then(files => buildUI(shuffle(files)))
+    .catch(e => {
+      document.getElementById("status").textContent = "Error loading files: " + e.message;
+    });
+</script>
+</body>
+</html>
