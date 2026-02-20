@@ -1,0 +1,196 @@
+Best Validation Accuracy: 0.8796
+Final Test Accuracy: 0.8796
+
+Classification Report:
+              precision    recall  f1-score   support
+
+       angry       0.94      0.90      0.92       841
+     disgust       0.86      0.89      0.88       815
+        fear       0.87      0.82      0.84       837
+       happy       0.86      0.89      0.87       834
+         sad       0.87      0.90      0.89       833
+
+    accuracy                           0.88      4160
+   macro avg       0.88      0.88      0.88      4160
+weighted avg       0.88      0.88      0.88      4160
+
+Confusion Matrix:
+angry disgust fear happy sad
+758 23 13 44 3
+18 726 17 25 29
+11 28 683 46 69
+20 33 31 741 9
+2 32 41 7 751
+
+Feature Importance (permutation-based, mean accuracy drop):
+Baseline accuracy: 0.8796
+1 mfcc0_std 0.0825
+2 mfcc3_std 0.0781
+3 mfcc2_std 0.0654
+4 mfcc_delta0_std 0.0623
+5 mfcc4_mean 0.0613
+6 mfcc0_flux 0.0608
+7 zcr_flux 0.0570
+8 mfcc4_std 0.0505
+9 mfcc7_mean 0.0433
+10 mfcc11_mean 0.0428
+11 rmse_flux 0.0428
+12 mfcc7_std 0.0413
+13 mfcc0_mean 0.0401
+14 mfcc6_mean 0.0397
+15 mfcc_delta3_std 0.0394
+16 mfcc8_mean 0.0370
+17 mfcc13_mean 0.0358
+18 mfcc10_mean 0.0351
+19 mfcc_delta4_std 0.0351
+20 mfcc2_std*mfcc0_std 0.0341
+21 mfcc_delta27_std 0.0315
+22 mfcc2_median 0.0312
+23 mfcc5_std 0.0312
+24 mfcc1_std 0.0310
+25 mfcc0_mean*rmse_mean 0.0308
+26 mfcc3_max 0.0298
+27 mfcc6_std 0.0291
+28 mfcc25_mean 0.0284
+29 rmse_std 0.0279
+30 rmse_max 0.0264
+31 mfcc5_max 0.0262
+32 mfcc_delta2_std 0.0252
+33 rmse_median 0.0248
+34 mfcc1_max 0.0248
+35 mfcc9_mean 0.0248
+36 mfcc3_min 0.0245
+37 mfcc8_std 0.0243
+38 zcr_max 0.0240
+39 mfcc23_mean 0.0236
+40 mfcc_delta2_min 0.0231
+41 mfcc1_median 0.0228
+42 mfcc1_min 0.0224
+43 mfcc_delta1_std 0.0224
+44 mfcc3_median 0.0221
+45 mfcc26_mean 0.0219
+46 mfcc_delta0_min 0.0219
+47 mfcc2_mean 0.0214
+48 mfcc18_mean 0.0212
+49 mfcc22_std 0.0212
+50 mfcc_delta18_std 0.0207
+51 mfcc2_min*mfcc0_mean 0.0207
+52 mfcc39_mean 0.0204
+53 mfcc5_min 0.0202
+54 mfcc16_std 0.0200
+55 mfcc12_mean 0.0195
+56 mfcc14_std 0.0195
+57 mfcc28_std 0.0195
+58 mfcc0_min 0.0192
+59 mfcc24_mean 0.0192
+60 mfcc0_median 0.0190
+61 mfcc_delta24_std 0.0190
+62 mfcc19_max 0.0185
+63 mfcc_delta6_std 0.0183
+64 mfcc9_std 0.0180
+65 mfcc_delta7_std 0.0178
+66 mfcc14_mean 0.0175
+67 mfcc_delta0_max 0.0175
+68 mfcc_delta17_std 0.0175
+69 mfcc_delta29_std 0.0171
+70 mfcc_delta13_std 0.0168
+71 mfcc11_std 0.0166
+72 mfcc_delta12_std 0.0166
+73 mfcc2_max 0.0161
+74 mfcc_delta22_std 0.0161
+75 mfcc_delta35_std 0.0161
+76 mfcc0_max*rmse_max 0.0161
+77 mfcc39_std 0.0159
+78 mfcc12_std 0.0156
+79 mfcc17_mean 0.0156
+80 mfcc23_std 0.0156
+81 mfcc32_mean 0.0156
+82 mfcc19_median 0.0154
+83 mfcc17_max 0.0151
+84 mfcc19_min 0.0147
+85 mfcc_delta32_std 0.0144
+86 mfcc5_median 0.0142
+87 mfcc17_min 0.0142
+88 mfcc18_std 0.0142
+89 mfcc31_mean 0.0142
+90 mfcc_delta8_std 0.0142
+91 mfcc5_mean 0.0139
+92 mfcc38_std 0.0139
+93 mfcc0_std*rmse_std 0.0139
+94 rmse_mean*mfcc0_mean*zcr_mean 0.0139
+95 mfcc32_std 0.0137
+96 mfcc_delta23_std 0.0137
+97 mfcc21_std 0.0135
+98 mfcc33_std 0.0135
+99 mfcc27_std 0.0132
+100 mfcc37_mean 0.0132
+101 mfcc15_mean 0.0130
+102 mfcc17_std 0.0130
+103 mfcc_delta21_std 0.0130
+104 mfcc0_mean*mfcc2_mean 0.0130
+105 zcr_mean 0.0127
+106 rmse_mean 0.0127
+107 mfcc3_mean 0.0127
+108 mfcc24_std 0.0127
+109 rmse_max*zcr_median 0.0127
+110 mfcc19_mean 0.0125
+111 mfcc21_mean 0.0125
+112 mfcc_delta33_std 0.0125
+113 zcr_median 0.0123
+114 mfcc16_min 0.0123
+115 mfcc34_mean 0.0123
+116 mfcc16_max 0.0120
+117 mfcc_delta11_std 0.0120
+118 mfcc_delta15_std 0.0120
+119 mfcc2_min 0.0118
+120 mfcc_delta28_std 0.0118
+121 mfcc15_std 0.0115
+122 mfcc22_mean 0.0115
+123 mfcc_delta19_std 0.0115
+124 rmse_mean/zcr_mean 0.0115
+125 mfcc_delta6_min 0.0113
+126 mfcc_delta6_max 0.0113
+127 mfcc_delta20_std 0.0113
+128 mfcc10_std 0.0111
+129 mfcc17_median 0.0111
+130 mfcc22_min 0.0111
+131 mfcc26_std 0.0111
+132 mfcc29_mean 0.0111
+133 mfcc30_std 0.0111
+134 mfcc37_std 0.0111
+135 mfcc_delta2_max 0.0111
+136 mfcc_delta36_std 0.0111
+137 mfcc25_std 0.0108
+138 mfcc_delta5_std 0.0108
+139 mfcc_delta10_std 0.0108
+140 zcr_std 0.0106
+141 mfcc1_mean 0.0106
+142 mfcc_delta9_std 0.0106
+143 mfcc_delta31_std 0.0106
+144 mfcc16_mean 0.0103
+145 mfcc27_mean 0.0103
+146 mfcc35_std 0.0101
+147 mfcc19_std 0.0099
+148 mfcc22_median 0.0099
+149 mfcc_delta26_std 0.0099
+150 mfcc_delta39_std 0.0099
+151 mfcc38_mean 0.0096
+152 mfcc35_mean 0.0094
+153 mfcc13_std 0.0091
+154 mfcc22_max 0.0091
+155 mfcc30_mean 0.0091
+156 mfcc_delta25_std 0.0091
+157 mfcc0_max 0.0089
+158 mfcc_delta38_std 0.0089
+159 mfcc16_median 0.0087
+160 mfcc34_std 0.0087
+161 mfcc28_mean 0.0082
+162 mfcc_delta34_std 0.0082
+163 mfcc_delta37_std 0.0079
+164 mfcc29_std 0.0077
+165 mfcc33_mean 0.0077
+166 mfcc31_std 0.0070
+167 mfcc_delta14_std 0.0058
+168 mfcc_delta16_std 0.0058
+169 rmse_std*zcr_std 0.0058
+170 mfcc_delta30_std 0.0046

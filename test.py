@@ -1,58 +1,46 @@
 import os
-import numpy as np
-from tensorflow import keras
 import pickle
-
+import torch
+import torch.nn as nn
 from features import extract_features
 
+model_dir = 'model'
+test_dir = 'test'
 
-def predict_emotion(file_path, model, label_encoder, scaler):
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+
+class CompactNet(nn.Module):
+    def __init__(self, input_dim, num_classes):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, 384), nn.BatchNorm1d(384), nn.ReLU(), nn.Dropout(0.3),
+            nn.Linear(384, 256), nn.BatchNorm1d(256), nn.ReLU(), nn.Dropout(0.3),
+            nn.Linear(256, 128), nn.BatchNorm1d(128), nn.ReLU(), nn.Dropout(0.2),
+            nn.Linear(128, num_classes)
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
+
+checkpoint = torch.load(os.path.join(model_dir, 'focal_model_0.pth'))
+model = CompactNet(checkpoint['input_dim'], checkpoint['num_classes']).to(device)
+model.load_state_dict(checkpoint['model_state_dict'])
+model.eval()
+
+with open(os.path.join(model_dir, 'focal_artifacts_0.pkl'), 'rb') as f:
+    artifacts = pickle.load(f)
+    label_encoder = artifacts['label_encoder']
+    scaler = artifacts['scaler']
+
+for test_file in sorted(f for f in os.listdir(test_dir) if f.endswith('.wav')):
     try:
-        features = extract_features(file_path)
-        features = features.reshape(1, -1)
-        features_scaled = scaler.transform(features)
-
-        prediction = model.predict(features_scaled, verbose=0)
-        predicted_class = np.argmax(prediction)
-        confidence = prediction[0][predicted_class]
-
-        emotion = label_encoder.inverse_transform([predicted_class])[0]
-
-        all_probs = {label_encoder.inverse_transform([i])[0]: prediction[0][i]
-                     for i in range(len(prediction[0]))}
-
-        return emotion, confidence, all_probs
+        features = extract_features(os.path.join(test_dir, test_file))
+        tensor = torch.FloatTensor(scaler.transform(features.reshape(1, -1))).to(device)
+        with torch.no_grad():
+            probs = torch.softmax(model(tensor), dim=1)
+        idx = probs.argmax(1).item()
+        print(f"{test_file}: {label_encoder.classes_[idx]} (conf: {probs[0, idx].item():.4f})")
     except Exception as e:
-        return None, None, str(e)
-
-
-def main():
-
-    print("Loading model...")
-    model = keras.models.load_model('emotion_model.keras')
-
-    with open('label_encoder.pkl', 'rb') as f:
-        label_encoder = pickle.load(f)
-
-    with open('scaler.pkl', 'rb') as f:
-        scaler = pickle.load(f)
-
-    test_folder = 'test'
-
-    audio_files = sorted([f for f in os.listdir(test_folder) if f.endswith('.wav')])
-
-    for file in audio_files:
-        file_path = os.path.join(test_folder, file)
-        emotion, confidence, all_probs = predict_emotion(file_path, model, label_encoder, scaler)
-
-        if emotion:
-            print(f"{file}: {emotion}")
-            sorted_probs = sorted(all_probs.items(), key=lambda x: x[1], reverse=True)
-            print(f"  All: {', '.join([f'{e}: {p:.1%}' for e, p in sorted_probs])}")
-            print()
-        else:
-            print(f"{file}: Error - {all_probs}")
-
-
-if __name__ == "__main__":
-    main()
+        print(f"Error processing {test_file}: {e}")
