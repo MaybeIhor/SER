@@ -421,20 +421,12 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(rows),
         });
-        showToast("Submitted. Thank you.");
         statusEl.textContent = "Submitted.";
       } catch (e) {
         btn.disabled = false;
         statusEl.textContent = "Error: " + e.message;
       }
     });
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.style.display = "block";
-    setTimeout(() => t.style.display = "none", 3000);
   }
 
   loadFiles()
