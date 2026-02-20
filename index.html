@@ -16,18 +16,10 @@
     --border-hover: #666;
     --text: #e8e8e8;
     --muted: #999;
-    --happy-sel: #1a3320;
-    --happy-border: #3a8050;
-    --happy-text: #6dbd85;
-    --angry-sel: #331515;
-    --angry-border: #8a2525;
-    --angry-text: #d96060;
-    --fear-sel: #221535;
-    --fear-border: #6a35a0;
-    --fear-text: #b080e8;
-    --sad-sel: #0f1f33;
-    --sad-border: #255a96;
-    --sad-text: #5ba8e0;
+    --happy-color: #6dbd85;
+    --angry-color: #d96060;
+    --fear-color:  #b080e8;
+    --sad-color:   #5ba8e0;
   }
 
   body {
@@ -53,7 +45,7 @@
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
   }
 
   .item-header {
@@ -70,31 +62,125 @@
     filter: invert(1) hue-rotate(180deg);
   }
 
-  .options {
+  .sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .slider-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 80px 1fr 36px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .slider-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .slider-label svg { opacity: 0.7; flex-shrink: 0; }
+
+  .slider-label.happy { color: var(--happy-color); }
+  .slider-label.angry { color: var(--angry-color); }
+  .slider-label.fear  { color: var(--fear-color);  }
+  .slider-label.sad   { color: var(--sad-color);   }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"].happy { accent-color: var(--happy-color); }
+  input[type="range"].angry { accent-color: var(--angry-color); }
+  input[type="range"].fear  { accent-color: var(--fear-color);  }
+  input[type="range"].sad   { accent-color: var(--sad-color);   }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  input[type="range"].happy::-webkit-slider-thumb { background: var(--happy-color); }
+  input[type="range"].angry::-webkit-slider-thumb { background: var(--angry-color); }
+  input[type="range"].fear::-webkit-slider-thumb  { background: var(--fear-color);  }
+  input[type="range"].sad::-webkit-slider-thumb   { background: var(--sad-color);   }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+  }
+
+  input[type="range"].happy::-moz-range-thumb { background: var(--happy-color); }
+  input[type="range"].angry::-moz-range-thumb { background: var(--angry-color); }
+  input[type="range"].fear::-moz-range-thumb  { background: var(--fear-color);  }
+  input[type="range"].sad::-moz-range-thumb   { background: var(--sad-color);   }
+
+  .slider-value {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    min-width: 36px;
+  }
+
+  .age-block {
+    max-width: 720px;
+    margin: 20px auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+  }
+
+  .age-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .age-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
 
-  .option { position: relative; }
+  .age-option { position: relative; }
 
-  .option input[type="radio"] {
+  .age-option input[type="radio"] {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
   }
 
-  .option label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    padding: 12px 4px 10px;
+  .age-option label {
+    display: block;
+    text-align: center;
+    padding: 10px 4px;
     border: 1px solid var(--border);
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.06em;
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
@@ -104,25 +190,17 @@
     color: var(--muted);
   }
 
-  .option label svg {
-    display: block;
-    transition: opacity 0.15s;
-    opacity: 0.7;
+  .age-option label:hover { border-color: var(--border-hover); color: var(--text); }
+
+  .age-option input:checked + label {
+    background: #252525;
+    border-color: var(--text);
+    color: var(--text);
   }
-
-  .option label:hover { border-color: var(--border-hover); color: var(--text); }
-  .option label:hover svg { opacity: 1; }
-
-  .option input[value="happy"]:checked + label { background: var(--happy-sel); border-color: var(--happy-border); color: var(--happy-text); }
-  .option input[value="angry"]:checked + label { background: var(--angry-sel); border-color: var(--angry-border); color: var(--angry-text); }
-  .option input[value="fear"]:checked  + label { background: var(--fear-sel);  border-color: var(--fear-border);  color: var(--fear-text);  }
-  .option input[value="sad"]:checked   + label { background: var(--sad-sel);   border-color: var(--sad-border);   color: var(--sad-text);   }
-
-  .option input:checked + label svg { opacity: 1; filter: none; }
 
   .footer {
     max-width: 720px;
-    margin: 32px auto 0;
+    margin: 24px auto 0;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -176,23 +254,69 @@
 
 <div id="progress" class="progress"></div>
 <div class="items" id="items"></div>
+
+<div class="age-block">
+  <div class="age-label">Your age group</div>
+  <div class="age-options">
+    <div class="age-option">
+      <input type="radio" name="age" id="age1" value="0-25">
+      <label for="age1">0 – 25</label>
+    </div>
+    <div class="age-option">
+      <input type="radio" name="age" id="age2" value="25-50">
+      <label for="age2">25 – 50</label>
+    </div>
+    <div class="age-option">
+      <input type="radio" name="age" id="age3" value="50+">
+      <label for="age3">50+</label>
+    </div>
+  </div>
+</div>
+
 <div class="footer">
   <button class="submit-btn" id="submitBtn" disabled>Submit</button>
-  <span class="status" id="status">Answer all items to submit.</span>
+  <span class="status" id="status">Complete all samples and select age group.</span>
 </div>
 <div id="toast"></div>
 
 <script>
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_D8hVt0exe4TOJlEUENuPVp7BODr8FcipV9qO6Zn3MryBbLkK4Rcq1PCpD3vneNtw/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGT2PFJODulFHRRFgB2vuKhhE3V6Ic0mvHn-eFYVZDRUnzKTBCe-O1QwBqE2v-r4Y/exec";
   const BASE_URL = "https://maybeihor.github.io/SER/test/";
   const EMOTIONS = ["happy", "angry", "fear", "sad"];
 
   const ICONS = {
-    happy: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="11" r="1.5" fill="currentColor"/><circle cx="18" cy="11" r="1.5" fill="currentColor"/><path d="M9 16.5c1 2.5 9 2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    angry: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="13" r="1.5" fill="currentColor"/><circle cx="18" cy="13" r="1.5" fill="currentColor"/><path d="M8 9.5l4 2M20 9.5l-4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 19.5c1-2.5 9-2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    fear: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><ellipse cx="10" cy="12" rx="2" ry="2.5" fill="currentColor"/><ellipse cx="18" cy="12" rx="2" ry="2.5" fill="currentColor"/><ellipse cx="14" cy="19" rx="3" ry="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 8.5l-.5-2M16 8.5l.5-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    sad: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="11" r="1.5" fill="currentColor"/><circle cx="18" cy="11" r="1.5" fill="currentColor"/><path d="M9 19.5c1-2.5 9-2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M17.5 15.5c.3-.8 1-1.2 1.5-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="18.5" cy="17" r="1" fill="currentColor" opacity="0.5"/></svg>`
+    happy: `<svg width="18" height="18" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="11" r="1.5" fill="currentColor"/><circle cx="18" cy="11" r="1.5" fill="currentColor"/><path d="M9 16.5c1 2.5 9 2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    angry: `<svg width="18" height="18" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="13" r="1.5" fill="currentColor"/><circle cx="18" cy="13" r="1.5" fill="currentColor"/><path d="M8 9.5l4 2M20 9.5l-4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 19.5c1-2.5 9-2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    fear:  `<svg width="18" height="18" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><ellipse cx="10" cy="12" rx="2" ry="2.5" fill="currentColor"/><ellipse cx="18" cy="12" rx="2" ry="2.5" fill="currentColor"/><ellipse cx="14" cy="19" rx="3" ry="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 8.5l-.5-2M16 8.5l.5-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    sad:   `<svg width="18" height="18" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="11" r="1.5" fill="currentColor"/><circle cx="18" cy="11" r="1.5" fill="currentColor"/><path d="M9 19.5c1-2.5 9-2.5 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="18.5" cy="17" r="1" fill="currentColor" opacity="0.5"/></svg>`
   };
+
+  let ageSelected = false;
+  let allSlidersTouched = false;
+  const touchedItems = new Set();
+  let totalFiles = 0;
+
+  document.querySelectorAll('input[name="age"]').forEach(r => {
+    r.addEventListener("change", () => {
+      ageSelected = true;
+      checkSubmit();
+    });
+  });
+
+  function checkSubmit() {
+    const ready = ageSelected && touchedItems.size === totalFiles;
+    document.getElementById("submitBtn").disabled = !ready;
+    if (!ready) {
+      const missing = totalFiles - touchedItems.size;
+      if (missing > 0) {
+        document.getElementById("status").textContent = `${missing} sample${missing > 1 ? "s" : ""} remaining.`;
+      } else {
+        document.getElementById("status").textContent = "Your age.";
+      }
+    } else {
+      document.getElementById("status").textContent = "Ready to submit.";
+    }
+  }
 
   async function loadFiles() {
     const res = await fetch("files.json");
@@ -209,11 +333,10 @@
   }
 
   function buildUI(files) {
+    totalFiles = files.length;
     const container = document.getElementById("items");
     const progressEl = document.getElementById("progress");
-    const submitBtn = document.getElementById("submitBtn");
-    const statusEl = document.getElementById("status");
-    const answers = {};
+    progressEl.textContent = `0 / ${files.length} samples`;
 
     files.forEach((filename, i) => {
       const item = document.createElement("div");
@@ -228,60 +351,79 @@
       audio.preload = "none";
       audio.src = BASE_URL + filename;
 
-      const options = document.createElement("div");
-      options.className = "options";
+      const sliders = document.createElement("div");
+      sliders.className = "sliders";
 
       EMOTIONS.forEach(emotion => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "option";
+        const row = document.createElement("div");
+        row.className = "slider-row";
 
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = `q_${i}`;
-        input.value = emotion;
-        input.id = `q_${i}_${emotion}`;
+        const labelEl = document.createElement("div");
+        labelEl.className = `slider-label ${emotion}`;
+        labelEl.innerHTML = ICONS[emotion] + `<span>${emotion}</span>`;
 
-        input.addEventListener("change", () => {
-          answers[filename] = emotion;
-          const answered = Object.keys(answers).length;
-          progressEl.textContent = `${answered} / ${files.length} answered`;
-          if (answered === files.length) {
-            submitBtn.disabled = false;
-            statusEl.textContent = "Ready to submit.";
-          }
+        const range = document.createElement("input");
+        range.type = "range";
+        range.className = emotion;
+        range.min = 0;
+        range.max = 100;
+        range.value = 0;
+        range.dataset.file = filename;
+        range.dataset.emotion = emotion;
+
+        const valueEl = document.createElement("span");
+        valueEl.className = "slider-value";
+        valueEl.textContent = "0.00";
+
+        range.addEventListener("input", () => {
+          valueEl.textContent = (range.value / 100).toFixed(2);
+          touchedItems.add(filename);
+          progressEl.textContent = `${touchedItems.size} / ${files.length} samples`;
+          checkSubmit();
         });
 
-        const label = document.createElement("label");
-        label.htmlFor = `q_${i}_${emotion}`;
-        label.innerHTML = ICONS[emotion] + `<span>${emotion}</span>`;
-
-        wrapper.appendChild(input);
-        wrapper.appendChild(label);
-        options.appendChild(wrapper);
+        row.appendChild(labelEl);
+        row.appendChild(range);
+        row.appendChild(valueEl);
+        sliders.appendChild(row);
       });
 
       item.appendChild(header);
       item.appendChild(audio);
-      item.appendChild(options);
+      item.appendChild(sliders);
       container.appendChild(item);
     });
 
-    progressEl.textContent = `0 / ${files.length} answered`;
-
-    submitBtn.addEventListener("click", async () => {
-      submitBtn.disabled = true;
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const btn = document.getElementById("submitBtn");
+      const statusEl = document.getElementById("status");
+      btn.disabled = true;
       statusEl.textContent = "Saving...";
+
+      const ageGroup = document.querySelector('input[name="age"]:checked').value;
+      const timestamp = new Date().toISOString();
+      const rows = [];
+
+      files.forEach(filename => {
+        const row = { filename, age_group: ageGroup, timestamp };
+        EMOTIONS.forEach(emotion => {
+          const range = document.querySelector(`input[type="range"][data-file="${filename}"][data-emotion="${emotion}"]`);
+          row[emotion] = (range.value / 100).toFixed(4);
+        });
+        rows.push(row);
+      });
+
       try {
         await fetch(APPS_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(answers),
+          body: JSON.stringify(rows),
         });
         showToast("Submitted. Thank you.");
         statusEl.textContent = "Submitted.";
       } catch (e) {
-        submitBtn.disabled = false;
+        btn.disabled = false;
         statusEl.textContent = "Error: " + e.message;
       }
     });
