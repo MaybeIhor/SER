@@ -12,12 +12,22 @@
   :root {
     --bg: #111;
     --surface: #1c1c1c;
-    --border: #2e2e2e;
-    --border-hover: #555;
+    --border: #333;
+    --border-hover: #666;
     --text: #e8e8e8;
-    --muted: #4a4a4a;
-    --sel-bg: #e8e8e8;
-    --sel-text: #111;
+    --muted: #999;
+    --happy-sel: #1a3320;
+    --happy-border: #3a8050;
+    --happy-text: #6dbd85;
+    --angry-sel: #331515;
+    --angry-border: #8a2525;
+    --angry-text: #d96060;
+    --fear-sel: #221535;
+    --fear-border: #6a35a0;
+    --fear-text: #b080e8;
+    --sad-sel: #0f1f33;
+    --sad-border: #255a96;
+    --sad-text: #5ba8e0;
   }
 
   body {
@@ -97,22 +107,18 @@
   .option label svg {
     display: block;
     transition: opacity 0.15s;
-    opacity: 0.35;
+    opacity: 0.7;
   }
 
   .option label:hover { border-color: var(--border-hover); color: var(--text); }
-  .option label:hover svg { opacity: 0.75; }
+  .option label:hover svg { opacity: 1; }
 
-  .option input:checked + label {
-    background: var(--sel-bg);
-    border-color: var(--sel-bg);
-    color: var(--sel-text);
-  }
+  .option input[value="happy"]:checked + label { background: var(--happy-sel); border-color: var(--happy-border); color: var(--happy-text); }
+  .option input[value="angry"]:checked + label { background: var(--angry-sel); border-color: var(--angry-border); color: var(--angry-text); }
+  .option input[value="fear"]:checked  + label { background: var(--fear-sel);  border-color: var(--fear-border);  color: var(--fear-text);  }
+  .option input[value="sad"]:checked   + label { background: var(--sad-sel);   border-color: var(--sad-border);   color: var(--sad-text);   }
 
-  .option input:checked + label svg {
-    opacity: 1;
-    filter: invert(1);
-  }
+  .option input:checked + label svg { opacity: 1; filter: none; }
 
   .footer {
     max-width: 720px;
