@@ -1,41 +1,32 @@
 from pathlib import Path
 import numpy as np
-from features import extract_features_augmented
+from features import extract
 
 
-def preprocess_data(emotions_dir='emotions'):
-    cache_dir = Path('cache')
-    cache_dir.mkdir(exist_ok=True)
+def preprocess(path_cfg, feat_cfg):
+    cache = Path(path_cfg.cache)
+    features, labels, names = [], [], None
 
-    features_list, labels_list = [], []
-
-    for emotion_folder in Path(emotions_dir).iterdir():
-        if not emotion_folder.is_dir():
+    for emotion_dir in sorted(Path(path_cfg.emotion).iterdir()):
+        if not emotion_dir.is_dir():
             continue
-        emotion = emotion_folder.name
-        audio_files = list(emotion_folder.glob('*.wav'))
-        print(f"Processing {emotion}: {len(audio_files)} files")
+        emotion = emotion_dir.name
+        samples = sorted(emotion_dir.glob("*.wav"))
 
-        for audio_file in audio_files:
-            try:
-                features = extract_features_augmented(str(audio_file))
-                if features is not None:
-                    for feat in features:
-                        features_list.append(feat)
-                        labels_list.append(emotion)
-            except Exception as e:
-                print(f"Error processing {audio_file}: {e}")
+        print(f"Processing {emotion}: {len(samples)} files")
+        for sample in samples:
+            augmented = extract(str(sample), feat_cfg, aug=True)
+            if augmented is None:
+                continue
+            for feat_dict in augmented:
+                names = names or list(feat_dict.keys())
+                features.append(list(feat_dict.values()))
+                labels.append(emotion)
 
-    features_array = np.array(features_list)
-    labels_array = np.array(labels_list)
+    features = np.array(features)
+    labels = np.array(labels)
+    np.save(cache / path_cfg.feature, features)
+    np.save(cache / path_cfg.label, labels)
+    np.save(cache / path_cfg.name, np.array(names))
 
-    np.save(cache_dir / 'features_50.npy', features_array)
-    np.save(cache_dir / 'labels_50.npy', labels_array)
-
-    print(f"Features shape: {features_array.shape}")
-    print(f"Labels shape: {labels_array.shape}")
-    print(f"Emotions: {np.unique(labels_array)}")
-
-
-if __name__ == '__main__':
-    preprocess_data()
+    print(f"Features: {features.shape}, Emotions: {np.unique(labels)}")
