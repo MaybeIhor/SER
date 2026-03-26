@@ -234,6 +234,19 @@
     margin: 0 auto 20px;
   }
 
+  .instructions {
+    max-width: 720px;
+    margin: 0 auto 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+  }
+
   #toast {
     display: none;
     position: fixed;
@@ -252,6 +265,7 @@
 </head>
 <body>
 
+<div class="instructions">Select one or more emotions you hear in the audio file. Select the corresponding emotion by moving the slider from left to right by confidence (up to 100%). Select your age group at the end of the survey.</div>
 <div id="progress" class="progress"></div>
 <div class="items" id="items"></div>
 
